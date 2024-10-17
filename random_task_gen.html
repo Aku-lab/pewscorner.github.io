@@ -1,0 +1,135 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="stylesheet" type="text/css" href="style2.css">
+<title>Random Code Generator</title>
+<script type="text/javascript" src="page.js"></script>
+<style type="text/css">
+#alphabet {
+    box-sizing: border-box;
+    width: 100%;
+}
+
+#codesize {
+    text-align: right;
+}
+
+#code {
+    background-color: transparent;
+    font: bold 100% 'Courier New', monospace;
+    box-sizing: border-box;
+    word-break: break-all;
+    width: 100%;
+    height: 4em;
+    resize: none;
+    border: 1px solid;
+    padding: 0.2em;
+    margin: 0.2em 0px;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+        <h1>Task Generator</h1>
+        <div class="task-display" id="task-display" ondblclick="copyToClipboard()">
+            <!-- Random tasks will be displayed here -->
+        </div>
+
+        <div class="d-flex justify-content-between">
+            <button class="btn" onClick="generateTasks()">Generate New Tasks</button>
+            <button class="btn" onClick="copyToClipboard()">Copy Task</button>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="copy-toast" style="position: absolute; top: 20px; right: 20px; z-index: 1050" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong class="mr-auto">Success</strong>
+            <small class="text-muted">just now</small>
+            <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="toast-body">
+            Tasks Copied!
+        </div>
+    </div>
+
+    <footer>
+        Made by Aku
+    </footer>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script type="text/javascript">
+        "use strict";
+
+        const tasks = [
+            { name: "Adi Kailash", link: "https://maps.app.goo.gl/GPkJzX9KsbmrZ2VU8" },
+            { name: "Kedarnath", link: "https://maps.app.goo.gl/pAetUcSbzaQJjCTF8" },
+            { name: "Kamet Uttarakhand 246422, India", link: "https://maps.app.goo.gl/eKCHttMLvAFQw7Yg8" },
+            { name: "Trisul, Chamoli, Uttarakhand 246443, India", link: "https://maps.app.goo.gl/9arEifvMPbdPuvax7" },
+            { name: "Nanda Devi", link: "https://maps.app.goo.gl/T3jtCaBQxBCkoxwf9" },
+            { name: "Kamet", link: "https://maps.app.goo.gl/sbkroQk49JD281f76" },
+            { name: "Punjab Grill Bandra Kurla Complex, Mumbai, Maharashtra 400098, India", link: "https://maps.app.goo.gl/EJ778B5m2RTyG4RN8" },
+            { name: "Copper Chimney - Authentic Indian Food Near Bandra East (BKC)", link: "https://maps.app.goo.gl/GMQw4Dq53agmSkzh7" },
+            { name: "Poetry by Love and Cheesecake, Chembur, Mumbai, Maharashtra 400071, India", link: "https://maps.app.goo.gl/XWHijb24MhmP79nR8" },
+            { name: "Café Coffee Day, Mumbai, Maharashtra 400088, India", link: "https://maps.app.goo.gl/d6QT8wHPjPtNShxY9" },
+            { name: "Love & Latte Sahar, Mumbai, Maharashtra 400059, India", link: "https://maps.app.goo.gl/AHd221VDAyf8Bkxe9" },
+            { name: "Dum Pukht, Delhi 110001, India", link: "https://maps.app.goo.gl/KRQt7NQXWZ9bG1e78" },
+            { name: "Khan Chacha, New Delhi, Delhi 110001, India", link: "https://maps.app.goo.gl/9Eb1bBMcMyQ8T9pS7" },
+            { name: "Hauz Khas Social, New Delhi, Delhi 110016, India", link: "https://maps.app.goo.gl/9Xe9CkY4iFex6aHDA" },
+            { name: "Paranthe Wali Gali, Chandni Chowk, New Delhi, Delhi 110006, India", link: "https://maps.app.goo.gl/hTt4csM3sNNWxWgT7" },
+            { name: "Mocambo, Kolkata, West Bengal 700016, India", link: "https://maps.app.goo.gl/gC5khkZtH1Hh9CFB8" },
+            { name: "Jaisalmer, Rajasthan, India", link: "https://maps.app.goo.gl/nDBHrPf9DqFnv1Z6A" },
+            { name: "Chhatra Sagar, Rajasthan, India", link: "https://maps.app.goo.gl/94SQpq8UJmB7A49C7" },
+            { name: "Jaisamand Lake, Udaipur, Rajasthan, India", link: "https://maps.app.goo.gl/5aq9g86NEJeCZUmj8" },
+            { name: "Kumbhalgarh Fort, Rajasthan, India", link: "https://maps.app.goo.gl/vWLBV4N6Bzkr5M7Q7" },
+            { name: "Taj Mahal, Agra, Uttar Pradesh, India", link: "https://maps.app.goo.gl/g5uqhbb5mBky45cx7" },
+            { name: "Shimla, Himachal Pradesh, India", link: "https://maps.app.goo.gl/1iMQk6rySgTgJKnV6" },
+            { name: "Manali, Himachal Pradesh, India", link: "https://maps.app.goo.gl/YiFCcT27C1Z1S9Z88" },
+            { name: "Mysore Palace, Mysuru, Karnataka, India", link: "https://maps.app.goo.gl/6czcKiFdo4tZXu7A8" },
+            { name: "Hampi, Karnataka, India", link: "https://maps.app.goo.gl/QxvGHK84yMT1NFWDA" },
+            { name: "Ranthambore National Park, Rajasthan, India", link: "https://maps.app.goo.gl/PhgVqEn6YxWgyyW6A" },
+            { name: "Andaman Islands, India", link: "https://maps.app.goo.gl/UyXjHch4sG32GgrZ6" },
+            { name: "Goa, India", link: "https://maps.app.goo.gl/GiPCKQJZZckjME1J9" },
+            { name: "Jammu and Kashmir, India", link: "https://maps.app.goo.gl/YuJc4A8TyEauBRHFA" },
+            { name: "Rishikesh, Uttarakhand, India", link: "https://maps.app.goo.gl/JkZG7XqG4dAAG5Hx6" },
+            { name: "Varanasi, Uttar Pradesh, India", link: "https://maps.app.goo.gl/2Fm3Avy5dyLpoUdv8" }
+        ];
+
+        function generateTasks() {
+            const randomTasks = [];
+            while (randomTasks.length < 2) {
+                const randomIndex = Math.floor(Math.random() * tasks.length);
+                const randomTask = tasks[randomIndex];
+                if (!randomTasks.includes(randomTask)) {
+                    randomTasks.push(randomTask);
+                }
+            }
+            document.getElementById("task-display").innerHTML = randomTasks.map(task => `${task.name}<br>${task.link}`).join("<br><br>");
+        }
+
+        function copyToClipboard() {
+            const taskText = document.getElementById("task-display").innerText;
+            navigator.clipboard.writeText(taskText).then(() => {
+                const copyToast = new bootstrap.Toast(document.getElementById('copy-toast'));
+                copyToast.show();
+            });
+        }
+
+        // Initial task generation
+        generateTasks();
+    </script>
+
+</body>
+</html>
