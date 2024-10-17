@@ -4,10 +4,7 @@
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/x-icon" href="favicon.ico">
-<link rel="stylesheet" type="text/css" href="style2.css">
-     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-  
+<link rel="stylesheet" type="text/css" href="style2.css">  
 <title>Random Task Generator</title>
 <script type="text/javascript" src="page.js"></script>
 <style type="text/css">
@@ -15,6 +12,52 @@
     box-sizing: border-box;
     width: 100%;
 }
+     .toast {
+    visibility: hidden;
+    max-width: 350px;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1050;
+    background-color: #333;
+    color: #fff;
+    padding: 16px;
+    border-radius: 8px;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out, visibility 0.5s;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.toast.show {
+    visibility: visible;
+    opacity: 1;
+}
+
+.toast-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+}
+
+.toast-body {
+    margin-top: 8px;
+    font-size: 14px;
+}
+
+.toast .close {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.toast .close:hover {
+    color: #ccc;
+}
+
+
 
     .task-display {
             background-color: rgba(255, 255, 255, 0.1);
