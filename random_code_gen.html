@@ -1,199 +1,80 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
-<meta http-equiv="content-type" content="text/html; charset=utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="icon" type="image/x-icon" href="favicon.ico">
-<link rel="stylesheet" type="text/css" href="style2.css">
-<title>Random Code Generator</title>
-<script type="text/javascript" src="page.js"></script>
-<style type="text/css">
-#alphabet {
-    box-sizing: border-box;
-    width: 100%;
-}
-
-#codesize {
-    text-align: right;
-}
-
-#code {
-    background-color: transparent;
-    font: bold 100% 'Courier New', monospace;
-    box-sizing: border-box;
-    word-break: break-all;
-    width: 100%;
-    height: 4em;
-    resize: none;
-    border: 1px solid;
-    padding: 0.2em;
-    margin: 0.2em 0px;
-}
-</style>
-<script type="text/javascript">
-"use strict";
-
-var codeformat_elem;
-        var alphabet_elem;
-        var alphabet_nchars_elem;
-        var alphabet_nbits_elem;
-        var codesize_elem;
-        var code_nbits_elem;
-        var code_elem;
-        var prefix_elem; // New variable for prefix input
-
-        const alphabets = {
-            hex: '123456789ABCDEF',
-            dec: '123456789',
-            bin: '1',
-            mime64: 'ABCDEFGHIJKLMNPQRSTUVWXYZabcdefghijklmnpqrstuvwxyz123456789+/',
-            unambig_ascii: 'ABCDEFGHJKLMNPQRSTUVXYZabcdefghijkmnpqrstuvxyz23456789!#$%&*+-./:;=?@[\]{}',
-            unambig_alphanum: 'ABCDEFGHJKLMNPQRSTUVXYZabcdefghijkmnpqrstuvxyz23456789'
-        };
-
-        var current_alphabet_codepoints;
-
-        function utf16_string_to_unicode_list(s) {
-            var unicode_list = [];
-            for (var i = 0; i < s.length; i++) {
-                var unicode_code = s.charCodeAt(i);
-                if (unicode_code >= 0xD800 && unicode_code < 0xDC00 && i < s.length - 1) {
-                    var utf16_2nd_code = s.charCodeAt(++i);
-                    if (utf16_2nd_code < 0xDC00 || utf16_2nd_code >= 0xE000) {
-                        i--;
-                    } else {
-                        unicode_code = (((unicode_code - 0xD800) << 10) | (utf16_2nd_code - 0xDC00)) + 0x10000;
-                    }
-                }
-                unicode_list.push(unicode_code);
-            }
-            return unicode_list;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="style2.css">
+    <title>Random Task Generator</title>
+    <script src="page.js" defer></script>
+    <style>
+        #alphabet {
+            box-sizing: border-box;
+            width: 100%;
         }
 
-        function codepoint_to_utf16_string(code) {
-            if (code < 0x10000) {
-                return String.fromCharCode(code);
-            } else if (code >= 0x110000) {
-                return '\uFFFD';
-            } else {
-                code -= 0x10000;
-                return String.fromCharCode((code >> 10) + 0xD800, (code & 0x3FF) + 0xDC00);
-            }
+        #codesize {
+            text-align: right;
         }
 
-        function generate_code() {
-            const nchars = +codesize_elem.value;
-            const prefix = prefix_elem.value.trim(); // Get the prefix value
-            if (isNaN(nchars) || (nchars < 1) || (nchars > 1000)) {
-                code_elem.value = 'Invalid code size! Must be 1 - 1000.';
-                return;
-            }
-            const format = codeformat_elem.value;
-            const is_unambig = format.startsWith('unambig');
-            const alphlen = current_alphabet_codepoints.length;
-            code_nbits_elem.innerText = (nchars * Math.log2(alphlen)).toFixed(2);
-            let code = prefix; // Start the code with the prefix
-            let last_ch = '';
-            for (let i = 0; i < nchars; i++) {
-                let ch;
-                do {
-                    const codepoint = current_alphabet_codepoints[Math.floor(Math.random() * alphlen)];
-                    ch = codepoint_to_utf16_string(codepoint);
-                } while (is_unambig && ['vv', 'VV', 'rn', 'rm'].includes(last_ch + ch));
-                code += ch; // Append to the code
-                last_ch = ch;
-            }
-            code_elem.value = code; // Set the final code
-            code_elem.focus();
-            code_elem.select();
+        #code {
+            background-color: transparent;
+            font: bold 100% 'Courier New', monospace;
+            box-sizing: border-box;
+            word-break: break-all;
+            width: 100%;
+            height: 4em;
+            resize: none;
+            border: 1px solid;
+            padding: 0.2em;
+            margin: 0.2em 0;
         }
-
-        function generate_code_with_new_alphabet(use_predefined) {
-            if (use_predefined) {
-                const format = codeformat_elem.value;
-                const alphabet = alphabets[format];
-                if (alphabet) {
-                    alphabet_elem.value = alphabet;
-                } else {
-                    codeformat_elem.value = 'user';
-                }
-                current_alphabet_codepoints = utf16_string_to_unicode_list(alphabet_elem.value);
-            } else {
-                current_alphabet_codepoints = utf16_string_to_unicode_list(alphabet_elem.value);
-                current_alphabet_codepoints = Array.from(new Set(current_alphabet_codepoints));
-                alphabet_elem.value = unicode_list_to_utf16_string(current_alphabet_codepoints);
-                codeformat_elem.value = 'user';
-                for (const format in alphabets) {
-                    if (alphabet_elem.value == alphabets[format]) {
-                        codeformat_elem.value = format;
-                        break;
-                    }
-                }
-            }
-            alphabet_nchars_elem.innerText = current_alphabet_codepoints.length
-            alphabet_nbits_elem.innerText = Math.log2(current_alphabet_codepoints.length).toFixed(2);
-            generate_code();
-        }
-
-        function init() {
-            codeformat_elem = document.getElementById('codeformat');
-            alphabet_elem = document.getElementById('alphabet');
-            alphabet_nchars_elem = document.getElementById('alph_nchars');
-            alphabet_nbits_elem = document.getElementById('alph_nbits');
-            codesize_elem = document.getElementById('codesize');
-            code_nbits_elem = document.getElementById('code_nbits');
-            code_elem = document.getElementById('code');
-            prefix_elem = document.getElementById('prefix'); // Initialize prefix element
-
-            generate_code_with_new_alphabet(true); // Use default alphabet
-        }
-
-        window.addEventListener('load', init, false);
-</script>
+    </style>
 </head>
 
 <body>
 
 <div class="hcontainer">
+    <h1>Random Code Generator</h1>
 
-<h1>Random Code Generator</h1>
+    <div class="box">
+        <label for="codeformat">Code format:</label>
+        <select id="codeformat" onchange="generate_code_with_new_alphabet(true)">
+            <option value="hex">Hex</option>
+            <option value="dec">Decimal</option>
+            <option value="bin">Binary</option>
+            <option value="mime64">MIME base64</option>
+            <option value="unambig_ascii">Unambiguous ASCII</option>
+            <option value="unambig_alphanum" selected>Unambiguous alphanumeric</option>
+            <option value="user">User defined</option>
+        </select>
 
-<div class="box">
-Code format:
-<select id="codeformat" onChange="generate_code_with_new_alphabet(true)">
-    <option value="hex">Hex
-    <option value="dec">Decimal
-    <option value="bin">Binary
-    <option value="mime64">MIME base64
-    <option value="unambig_ascii">Unambiguous ASCII
-    <option value="unambig_alphanum" selected>Unambiguous alphanumeric
-    <option value="user">User defined
-</select>
+        <p>
+            <label for="alphabet">Alphabet:</label>
+            <input type="text" id="alphabet" onfocus="this.select()" onchange="generate_code_with_new_alphabet(false)">
+            <br> Alphabet size: <span id="alph_nchars">0</span> characters (= <span id="alph_nbits">0</span> bits)
+        </p>
 
-<p>
-Alphabet:
-<input type="text" id="alphabet" onFocus="this.select()" onChange="generate_code_with_new_alphabet(false)">
-Alphabet size: <span id="alph_nchars">0</span>&nbsp;characters (=&nbsp;<span id="alph_nbits">0</span>&nbsp;bits)
-</p>
+        <p>
+            <label for="codesize">Code size:</label>
+            <input type="text" id="codesize" value="8" size="4" maxlength="4" onfocus="this.select()" onchange="generate_code()">
+            <br> (= <span id="code_nbits">0</span> bits)
+        </p>
 
-<p>
-Code size:
-<input type="text" id="codesize" value="8" size=4 maxlength=4 onFocus="this.select()" onChange="generate_code()"> characters
-(=&nbsp;<span id="code_nbits">0</span>&nbsp;bits)
-</p>
+        <p>
+            <label for="prefix">Prefix:</label>
+            <input type="text" id="prefix" onfocus="this.select()" placeholder="Enter prefix (e.g., AKU)">
+            <br> Your Salary code name (it can be two, three or more alphabets)
+        </p>
 
-<p>
-    <label for="prefix">Prefix:</label>
-    <input type="text" id="prefix" onFocus="this.select()" placeholder="Enter prefix (e.g., AKU)">
-    <br>
-    Your Salary code name ( it can be two, three or more alphabets )
-</p>
-    
-<button type="button" onClick="generate_code()">Generate new code</button>
-<textarea id="code" readonly onFocus="this.select()"></textarea>
+        <button type="button" onclick="generate_code()">Generate new code</button>
+        <textarea id="code" readonly onfocus="this.select()"></textarea>
+    </div>
 </div>
 
-</div>
+<footer>
+    Made by Aku
+</footer>
 
 </body>
 </html>
