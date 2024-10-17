@@ -198,16 +198,22 @@
         ];
 
         function generateTasks() {
-            const randomTasks = [];
-            while (randomTasks.length < 2) {
-                const randomIndex = Math.floor(Math.random() * tasks.length);
-                const randomTask = tasks[randomIndex];
-                if (!randomTasks.includes(randomTask)) {
-                    randomTasks.push(randomTask);
-                }
-            }
-            document.getElementById("task-display").innerHTML = randomTasks.map(task => `${task.name}<br>${task.link}`).join("<br><br>");
+    const randomTasks = [];
+    while (randomTasks.length < 2) { // Generate two tasks
+        const randomIndex = Math.floor(Math.random() * tasks.length);
+        const randomTask = tasks[randomIndex];
+        if (!randomTasks.includes(randomTask)) {
+            randomTasks.push(randomTask);
         }
+    }
+
+    const taskOutput = randomTasks.map((task, index) => 
+        `Task 0${index + 1}: ${task.name}<br>Link: <a href="${task.link}" target="_blank">${task.link}</a>`
+    ).join("<br><br>");
+
+    document.getElementById("task-display").innerHTML = taskOutput;
+}
+
 
         function copyToClipboard() {
             const taskText = document.getElementById("task-display").innerText;
