@@ -285,7 +285,7 @@ var genericPageSetup =
         this.header_elem = body_elem.appendChild(document.createElement('header'));
 
         var hs = '<div class="header_bar">';
-        hs += '<a class="hdrhomebut" href="' + this.rel_path_to_root + 'index.html">PEW\'s Corner<\/a>';
+        hs += '<a class="hdrhomebut" href="' + this.rel_path_to_root + 'index.html">Aku\'s Corner<\/a>';
         hs += '<button id="menubut" class="hdrnavbut">Menu<\/button>';
         hs += '<\/div>';
         this.header_elem.innerHTML = hs;
