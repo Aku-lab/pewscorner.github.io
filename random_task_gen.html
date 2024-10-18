@@ -218,17 +218,18 @@ function generateTasks() {
 
     function copyFullTask() {
         const taskText = document.getElementById("task-display").innerText;
-        const tasksFormatted = taskText.replace(/Task/g, 'Task').replace(/Link:/g, 'Link:');
+        const tasksFormatted = taskText.replace(/Task/g, `Task\n📍`).replace(/Link:/g, `🔗Link:`);
 
-        const fullTaskText = `✔️✔️✔️Google Maps Review Task ✔️✔️✔️
+        const fullTaskText = `✔️✔️✔️Google Maps Review Task ✔️✔️✔️📣 Announcement 📣
 
-A. Open Google Maps and search for these places:
+🕒 Time: 10.00AM to 13.00PM
+🎯 Demo Google Maps Review Task:
+
+A. 🌍 Open Google Maps and search for these two locations:
 
 ${tasksFormatted}
 
-B. Click on the Reviews option and give each place a 4- or 5-star rating.
-
-C. Take a screenshot and send it to me privately for verification.`;
+B. ⭐️ Click on the Reviews option, give a 4-5 ⭐️ rating for both places, and 📸 take a screenshot. Then send them to me for verification!`;
 
         navigator.clipboard.writeText(fullTaskText).then(() => {
             const copyToast = new bootstrap.Toast(document.getElementById('copy-toast'));
