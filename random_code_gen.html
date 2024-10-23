@@ -32,6 +32,127 @@
     </style>
 </head>
 
+      <script type="text/javascript">
+        "use strict";
+
+        var codeformat_elem;
+        var alphabet_elem;
+        var alphabet_nchars_elem;
+        var alphabet_nbits_elem;
+        var codesize_elem;
+        var code_nbits_elem;
+        var code_elem;
+        var prefix_elem; // New variable for prefix input
+
+        const alphabets = {
+            hex: '123456789ABCDEF',
+            dec: '123456789',
+            bin: '1',
+            mime64: 'ABCDEFGHIJKLMNPQRSTUVWXYZabcdefghijklmnpqrstuvwxyz123456789+/',
+            unambig_ascii: 'ABCDEFGHJKLMNPQRSTUVXYZabcdefghijkmnpqrstuvxyz23456789!#$%&*+-./:;=?@[\]{}',
+            unambig_alphanum: 'ABCDEFGHJKLMNPQRSTUVXYZabcdefghijkmnpqrstuvxyz23456789'
+        };
+
+        var current_alphabet_codepoints;
+
+        function utf16_string_to_unicode_list(s) {
+            var unicode_list = [];
+            for (var i = 0; i < s.length; i++) {
+                var unicode_code = s.charCodeAt(i);
+                if (unicode_code >= 0xD800 && unicode_code < 0xDC00 && i < s.length - 1) {
+                    var utf16_2nd_code = s.charCodeAt(++i);
+                    if (utf16_2nd_code < 0xDC00 || utf16_2nd_code >= 0xE000) {
+                        i--;
+                    } else {
+                        unicode_code = (((unicode_code - 0xD800) << 10) | (utf16_2nd_code - 0xDC00)) + 0x10000;
+                    }
+                }
+                unicode_list.push(unicode_code);
+            }
+            return unicode_list;
+        }
+
+        function codepoint_to_utf16_string(code) {
+            if (code < 0x10000) {
+                return String.fromCharCode(code);
+            } else if (code >= 0x110000) {
+                return '\uFFFD';
+            } else {
+                code -= 0x10000;
+                return String.fromCharCode((code >> 10) + 0xD800, (code & 0x3FF) + 0xDC00);
+            }
+        }
+
+        function generate_code() {
+            const nchars = +codesize_elem.value;
+            const prefix = prefix_elem.value.trim(); // Get the prefix value
+            if (isNaN(nchars) || (nchars < 1) || (nchars > 1000)) {
+                code_elem.value = 'Invalid code size! Must be 1 - 1000.';
+                return;
+            }
+            const format = codeformat_elem.value;
+            const is_unambig = format.startsWith('unambig');
+            const alphlen = current_alphabet_codepoints.length;
+            code_nbits_elem.innerText = (nchars * Math.log2(alphlen)).toFixed(2);
+            let code = prefix; // Start the code with the prefix
+            let last_ch = '';
+            for (let i = 0; i < nchars; i++) {
+                let ch;
+                do {
+                    const codepoint = current_alphabet_codepoints[Math.floor(Math.random() * alphlen)];
+                    ch = codepoint_to_utf16_string(codepoint);
+                } while (is_unambig && ['vv', 'VV', 'rn', 'rm'].includes(last_ch + ch));
+                code += ch; // Append to the code
+                last_ch = ch;
+            }
+            code_elem.value = code; // Set the final code
+            code_elem.focus();
+            code_elem.select();
+        }
+
+        function generate_code_with_new_alphabet(use_predefined) {
+            if (use_predefined) {
+                const format = codeformat_elem.value;
+                const alphabet = alphabets[format];
+                if (alphabet) {
+                    alphabet_elem.value = alphabet;
+                } else {
+                    codeformat_elem.value = 'user';
+                }
+                current_alphabet_codepoints = utf16_string_to_unicode_list(alphabet_elem.value);
+            } else {
+                current_alphabet_codepoints = utf16_string_to_unicode_list(alphabet_elem.value);
+                current_alphabet_codepoints = Array.from(new Set(current_alphabet_codepoints));
+                alphabet_elem.value = unicode_list_to_utf16_string(current_alphabet_codepoints);
+                codeformat_elem.value = 'user';
+                for (const format in alphabets) {
+                    if (alphabet_elem.value == alphabets[format]) {
+                        codeformat_elem.value = format;
+                        break;
+                    }
+                }
+            }
+            alphabet_nchars_elem.innerText = current_alphabet_codepoints.length
+            alphabet_nbits_elem.innerText = Math.log2(current_alphabet_codepoints.length).toFixed(2);
+            generate_code();
+        }
+
+        function init() {
+            codeformat_elem = document.getElementById('codeformat');
+            alphabet_elem = document.getElementById('alphabet');
+            alphabet_nchars_elem = document.getElementById('alph_nchars');
+            alphabet_nbits_elem = document.getElementById('alph_nbits');
+            codesize_elem = document.getElementById('codesize');
+            code_nbits_elem = document.getElementById('code_nbits');
+            code_elem = document.getElementById('code');
+            prefix_elem = document.getElementById('prefix'); // Initialize prefix element
+
+            generate_code_with_new_alphabet(true); // Use default alphabet
+        }
+
+        window.addEventListener('load', init, false);
+    </script>
+
 <body>
 
 <div class="hcontainer">
